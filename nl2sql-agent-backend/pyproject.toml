@@ -1,0 +1,83 @@
+[project]
+name = "nl2sql-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "aerich>=0.10.1",
+    "aiomysql>=0.3.2",
+    "asyncpg>=0.32.0",
+    "celery>=5.6.3",
+    "cryptography>=48.0.0",
+    "dashscope>=1.25.19",
+    "deepagents>=0.7.32",
+    "fastapi[standard]>=0.136.1",
+    "httpx>=0.28.1",
+    "jieba>=0.42.1",
+    "langchain>=1.3.1",
+    "langchain-community>=0.4.2",
+    "langchain-openai>=1.2.2",
+    "langgraph-checkpoint-postgres>=3.1.3",
+    "loguru>=0.7.3",
+    "orjson>=3.11.9",
+    "psycopg[binary,pool]>=3.3.6",
+    "qdrant-client>=1.18.0",
+    "ragas>=0.4.3",
+    "redis-om>=1.2.0",
+    "tortoise-orm>=0.25.4",
+    "tzdata>=2026.2",
+]
+
+[tool.postgresql]
+# 元数据库：业务库登记、表、字段、指标、评测数据集与评测会话的 checkpoint 都在这个库里。
+# scheme 必须是 postgres://（Tortoise 只认 asyncpg:// 与它的别名 postgres://）
+url = "postgres://postgres:123456@localhost:5432/text2sql"
+
+[tool.cors]
+allow_origins = ["*"]
+allow_credentials = true
+allow_methods = ["*"]
+allow_headers = ["*"]
+expose_headers = ["*"]
+
+[tool.snowflake]
+datacenter_id = 0
+worker_id = 0
+sequence = 0
+
+[tool.qdrant]
+url = "http://localhost:6333"
+
+[tool.redis]
+# 检索索引、短期记忆缓存与 Celery 共用这套连接配置（连接串见 plugins/redis.py 的 build_redis_url），
+# 对应 docker-compose 里的 redis-stack-server（带 RedisJSON 与 RediSearch）
+host = "localhost"
+port = 6379
+# 密码留空表示无鉴权
+password = ""
+# 0 号库留给 RediSearch 索引与缓存：索引只允许建在 0 号库（见 plugins.redis.migrate）
+db = 0
+
+[tool.celery]
+# broker 与结果后端复用 [tool.redis] 的地址与口令，这里只指定各自的库号（避开 0 号库里的索引）
+broker_db = 1
+result_db = 2
+# 拉起 worker 时的日志级别
+loglevel = "INFO"
+# worker 并发数：0 表示用 celery 默认（按 CPU 核数）
+concurrency = 0
+# 拉起 worker 时是否内嵌 beat（-B）按周期投递定时任务：单实例部署够用，多实例时应关掉并单独跑 celery beat。
+# Windows 上 celery 不接受 -B（worker 会直接报错退出），这项在那里不生效，定时任务要单独跑 celery beat
+beat = true
+# 表结构巡检周期（秒）：定时收集业务库里已变动 / 新增 / 删除的表
+scan_interval = 600
+# beat 调度状态文件：放 logs 下，避免在项目根目录留 celerybeat-schedule
+beat_schedule_file = "logs/celerybeat-schedule"
+# worker 进程池：留空表示用默认（Windows 上 solo，其余平台 prefork）
+pool = ""
+
+[tool.aerich]
+tortoise_orm = "config.TORTOISE_ORM_CONFIG"
+location = "./migrations"
+src_folder = "./."

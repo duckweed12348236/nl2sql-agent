@@ -1,0 +1,477 @@
+/* ==========================================================================
+   设计令牌 —— 对应 DESIGN.md 的色彩、字体、圆角与节奏
+   ========================================================================== */
+:root {
+  color-scheme: light;
+
+  --canvas: #ffffff;
+  --surface: #f6f5f4;
+  --surface-soft: #fafaf9;
+  --ink: #1a1a1a;
+  --text: #37352f;
+  --muted: #787671;
+  --hairline: #e5e3df;
+  --accent: #2458d3;
+  --accent-pressed: #1847ad;
+  --success: #1aae39;
+  --warning: #dd5b00;
+  --danger: #e03131;
+  --tint-lavender: #e7edff;
+  --tint-mint: #d9f3e1;
+  --tint-peach: #ffe8d4;
+  --tint-sky: #dcecfa;
+
+  --hover: rgba(15, 15, 15, 0.045);
+  --hairline-strong: #d8d5d1;
+
+  --font-display: 'Aptos Display', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-body: 'Aptos', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --shadow-float: 0 12px 36px rgba(15, 15, 15, 0.14);
+
+  --sidebar-width: 238px;
+  --topbar-height: 56px;
+  --content-max: 1480px;
+}
+
+/* ==========================================================================
+   Element Plus 变量覆写：让组件直接落在设计令牌上
+   ========================================================================== */
+:root {
+  --el-color-primary: var(--accent);
+  --el-color-primary-light-3: #668ae0;
+  --el-color-primary-light-5: #92ace9;
+  --el-color-primary-light-7: #bdcdf2;
+  --el-color-primary-light-8: #d3def6;
+  --el-color-primary-light-9: #e9eefb;
+  --el-color-primary-dark-2: var(--accent-pressed);
+
+  --el-color-success: var(--success);
+  --el-color-success-light-9: var(--tint-mint);
+  --el-color-warning: var(--warning);
+  --el-color-warning-light-9: var(--tint-peach);
+  --el-color-danger: var(--danger);
+  --el-color-error: var(--danger);
+  --el-color-danger-light-9: #fdeaea;
+  --el-color-info: var(--muted);
+  --el-color-info-light-9: var(--surface);
+
+  --el-text-color-primary: var(--text);
+  --el-text-color-regular: var(--text);
+  --el-text-color-secondary: var(--muted);
+  --el-text-color-placeholder: #a8a29e;
+  --el-text-color-disabled: #b8b5b0;
+
+  --el-border-color: var(--hairline);
+  --el-border-color-light: var(--hairline);
+  --el-border-color-lighter: #ecebe8;
+  --el-border-color-extra-light: #f1efec;
+  --el-border-color-hover: var(--hairline-strong);
+
+  --el-bg-color: var(--canvas);
+  --el-bg-color-page: var(--canvas);
+  --el-bg-color-overlay: var(--canvas);
+  --el-fill-color: var(--surface);
+  --el-fill-color-light: var(--surface);
+  --el-fill-color-lighter: var(--surface-soft);
+  --el-fill-color-blank: var(--canvas);
+  --el-mask-color: rgba(250, 250, 249, 0.72);
+
+  --el-font-family: var(--font-body);
+  --el-font-size-base: 14px;
+  --el-border-radius-base: var(--radius-lg);
+  --el-border-radius-small: var(--radius-md);
+  --el-component-size: 40px;
+  --el-component-size-small: 32px;
+  --el-component-size-large: 44px;
+  --el-box-shadow-light: var(--shadow-float);
+  --el-transition-duration: 0.22s;
+}
+
+/* ==========================================================================
+   基础排版
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dcd9d5;
+  border: 3px solid transparent;
+  border-radius: var(--radius-md);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ==========================================================================
+   通用版式类
+   ========================================================================== */
+.page {
+  /* 纵向撑满顶栏以下的可视区域：内容不足时由子项（split / 空状态）分摊剩余高度 */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--topbar-height));
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 24px 24px 56px;
+  /* 不用 fill-mode：动画结束后要回到 transform: none，
+     否则这一层会变成弹层（position: fixed）的包含块，遮罩与抽屉会按页面定位 */
+  animation: page-enter 240ms ease-out;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.page-head__title {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+.page-head__desc {
+  margin: 6px 0 0;
+  max-width: 760px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.page-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 24px 0 16px;
+}
+
+.toolbar .search {
+  width: 320px;
+  max-width: 100%;
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.section__title {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.muted-12 {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-name {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.table-wrap {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* 空状态占位：占满内容区的剩余高度，最少 320px */
+.empty-state {
+  flex: 1;
+  width: 100%;
+  min-height: 320px;
+}
+
+/* 表格 / 页签里的空状态：撑到半个视口高，避免塌成一条 */
+.empty-cell {
+  width: 100%;
+  min-height: 320px;
+  min-height: max(320px, 45dvh);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field__label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.field--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  align-items: start;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 状态与属性色块：4～6px 圆角，不使用胶囊 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tag--neutral {
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.tag--accent {
+  background: var(--tint-lavender);
+  color: var(--accent);
+}
+
+.tag--sky {
+  background: var(--tint-sky);
+  color: #1c5f96;
+}
+
+.tag--mint {
+  background: var(--tint-mint);
+  color: #17762c;
+}
+
+.tag--peach {
+  background: var(--tint-peach);
+  color: var(--warning);
+}
+
+/* ==========================================================================
+   组件细节
+   ========================================================================== */
+.el-button {
+  border-radius: var(--radius-lg);
+  transition:
+    transform 120ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.el-button:not(.is-disabled):active {
+  transform: scale(0.96);
+}
+
+/* 主按钮取深墨色，钴蓝留给焦点与选中状态 */
+.el-button--primary {
+  --el-button-bg-color: var(--ink);
+  --el-button-border-color: var(--ink);
+  --el-button-hover-bg-color: #000000;
+  --el-button-hover-border-color: #000000;
+  --el-button-active-bg-color: #000000;
+  --el-button-active-border-color: #000000;
+}
+
+.el-input__wrapper,
+.el-select__wrapper,
+.el-textarea__inner {
+  border-radius: var(--radius-lg);
+}
+
+/* 聚焦显示 2px 钴蓝色焦点环 */
+.el-input__wrapper.is-focus,
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 2px rgba(36, 88, 211, 0.24) !important;
+}
+
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 2px rgba(36, 88, 211, 0.24) !important;
+}
+
+.el-table {
+  --el-table-border-color: var(--hairline);
+  --el-table-header-bg-color: var(--surface-soft);
+  --el-table-header-text-color: var(--muted);
+  --el-table-row-hover-bg-color: var(--surface-soft);
+  --el-table-text-color: var(--text);
+  font-size: 14px;
+}
+
+.el-table th.el-table__cell {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.el-switch {
+  --el-switch-on-color: var(--accent);
+  --el-switch-off-color: #d3d0cb;
+}
+
+.el-dialog {
+  --el-dialog-padding-primary: 24px;
+  --el-dialog-border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+}
+
+.el-dialog__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.el-dialog__body {
+  color: var(--text);
+}
+
+.el-drawer {
+  --el-drawer-padding-primary: 24px;
+  box-shadow: var(--shadow-float);
+}
+
+.el-drawer__header {
+  margin-bottom: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.el-drawer__footer {
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+}
+
+.el-message-box,
+.el-message {
+  border-radius: var(--radius-lg);
+  border-color: var(--hairline);
+}
+
+.el-message-box {
+  box-shadow: var(--shadow-float);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
